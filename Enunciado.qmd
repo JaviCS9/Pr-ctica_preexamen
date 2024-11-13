@@ -1,0 +1,150 @@
+---
+title: "Taller evaluado de repaso para el Primer Parcial"
+subtitle: "20582- Análisis de Datos para el GMAT"
+format:
+  html:
+    theme: lumen
+    toc: true
+    toc-depth: 3
+Rendering:
+    embed-resources: true
+---
+
+Elige un tema que te interese (finanzas, medio ambiente, educación, cine, entre otros). En este taller, aplicarás los pasos del método científico (ver sección 1.1 de los apuntes de la asignatura) para abordar, con datos simulados, una problemática relacionada con el tema elegido. Deberás presentar un informe de tu proyecto siguiendo la estructura detallada en el documento “Recomendaciones para escribir informes de proyectos en Estadística,” que se encuentra en la sección "Práctica" de la página del curso en Aula Digital.
+
+### Primer paso: 
+
+Define los objetivos de tu trabajo: Describe la hipótesis general que deseas investigar y especifica los objetivos específicos necesarios para validar o refutar dicha hipótesis.
+
+El objetivo será ver si las tortugas de la isla Española són significativamente más jóvenes que las del resto de islas.
+
+Para ello tendremos que contrastar su media multivariante con la de otra isla para ver si existen diferencias considerables, pero antes veremos cómo de probable es que si observamos una tortuga joven, esta sea de Española.
+
+### Segundo paso:
+
+Define las variables clave para probar tu hipótesis. Asegúrate de incluir al menos cuatro variables cuantitativas, tres ordinales y dos nominales. Indica las unidades de medida para las variables cuantitativas y los niveles para las variables nominales y ordinales. A continuación, simula los datos en R de acuerdo a las siguientes pautas:
+
+```{r}
+library(stats)
+```
+* **Tabla 1**: Genera una tabla con al menos 100 observaciones y las variables definidas en el paso anterior, asegurate que las variables cuantitativas sigan una distribución normal multivariante. A continuación, te presento un ejemplo que simula datos de una encuesta aplicada a estudiantes de secundaria sobre sus hábitos de estudio y rendimiento y que incluye información sobre su contexto de vida, como horas de sueño y tiempo de traslado a la escuela. Este ejemplo no lo debes usar en tu proyecto, solo es para darte una idea de lo que te pido hacer.
+
+### Tercer paso
+
+Realiza un análisis descriptivo multivariantes de tu base de datos de acuerdo a los objetivos de tu trabajo. Describe lo observado en el contexto del problema. 
+
+Para las variables cuantitativas de tu base de datos, calcula e interpreta la información que proporciona la varianza generalizada y la varianza total
+
+```{r}
+tortugas=read.csv("C:/AD/Practica_preexamen/tortugas_galapagos_normal.csv")
+tortugas_num=tortugas[,3:5]
+scal_tortugas=scale(tortugas_num)
+pca_tortugas=prcomp(scal_tortugas,center = TRUE, scale. = TRUE)
+summary(pca_tortugas)
+```
+```{r}
+pca_tortugas$rotation
+
+```
+```{r}
+pca_tortugas$sdev^2/sum(pca_tortugas$sdev^2)
+
+```
+```{r}
+head(pca_tortugas$x)
+```
+```{r}
+screeplot(pca_tortugas, main = "Scree Plot", col = "blue", type = "lines")
+```
+Calculemos ahora las varianzas totales y generalizadas:
+```{r}
+cov_tortugas=cov(scal_tortugas)
+var_gen=det(cov_tortugas)
+var_tot=sum(diag(cov_tortugas))
+var_tot
+var_gen
+```
+Como la varianza generalizada és mucho menor que la total, podemos afirmar que las variables estan altamente correlacionadas entre ellas.
+* **Tabla 2**: Consigue algunos datos en Internet que puedas utilizar para ayudar a resolver tu problema (una variable o dos basta), algunas ideas de dónde buscar son: [datos abiertos del Gobierno de España](https://datos.gob.es/es/), [INE](https://www.ine.es/ss/Satellite?L=0&c=Page&cid=1259942408928&p=1259942408928&pagename=ProductosYServicios%2FPYSLayout), [Kaggle](https://www.kaggle.com/), etc. 
+
+
+Une ambas tablas utilizando un identificador simulado en una base de datos única. Emplea las funciones del paquete tidyverse explicadas en la sección 1.7.5 de los apuntes de la asignatura. Esta parte es opcional, pero te permitirá enriquecer tu base de datos y realizar análisis más completos.
+
+
+
+
+### Cuarto paso
+
+Selecciona una de las variables no cuantitativas y modelízala con una distribución multinomial, debes estimar sus parámetros. Utiliza el modelo para calcular la probabilidad de que ocurra un evento de interés en una muestra de tamaño 20, relevante para tu problema.
+```{r}
+library(nnet)
+multinom_tortugas=multinom(Isla ~ Edad..años.+Peso..kg.+Longitud.del.Caparazón..cm., data = tortugas)
+summary(multinom_tortugas)
+```
+```{r}
+predicciones = predict(multinom_tortugas, type = "probs")
+head(predicciones)
+```
+```{r}
+predicciones_class = predict(multinom_tortugas)
+head(predicciones_class)
+p_esp=predicciones[,"Española"]
+med_esp=mean(p_esp)
+tam_esp=20
+k_esp=0:tam_esp
+prob_k=dbinom(k_esp,size=tam_esp,prob = med_esp)
+
+```
+Hay un 11.65 % de probabilidad de que suceda exactamente un evento de interés.
+También si observamos las probabilidades para las tortugas más jóvenes, estas suelen estar asociadas a Española.
+```{r}
+data.frame(Ocurrencias=k_esp,Probabilidades=prob_k)
+```
+
+
+Hay 
+### Quinto paso
+
+Con las variables cuantitativas de tu base de datos, ajusta un modelo de regresión multivariante en la forma:
+
+$$Y=\beta_0+\beta_1 X_1+ \cdots + \beta_p X_p + \epsilon$$
+Donde $Y$ es la variable cuantitativa que deseas explicar en función del resto de variables cuantitativas registradas. Además, calcula la función de score e interpreta su resultado en el contexto del problema.
+
+Para nuestro caso tendremos:
+```{r}
+Y=tortugas$Edad..años.
+predictoras=tortugas[,c("Peso..kg.","Longitud.del.Caparazón..cm.")]
+reg_tort=lm(Edad..años.~Peso..kg.+Longitud.del.Caparazón..cm.,data=tortugas)
+summary(reg_tort)
+```
+```{r}
+score=predict(reg_tort)
+head(score)
+```
+Al obtener coeficientes positivos para ambas variables predictoras podemos concluir que tanto un mayor peso como una mayor longitud del caparazón tienden a indicar que estamos hablando de una tortuga más longeva.
+
+### Sexto paso
+
+Realiza un contraste de hipótesis de dos medias multivariante que sea relevante para tu problema. Por ejemplo, podrías evaluar si el vector de medias de la variable cuantitativa de interés $Y$ es el mismo para dos niveles distintos de la variable no cuantitativa que modelaste como multinomial en el paso anterior. Ejecuta el contraste tanto teóricamente como con la función hotelling.test en R. Escribe la conclusión del contraste en el contexto de tu problema.
+
+En este caso los niveles elegidos seran las islas San Cristóbal y Española, veremos si son significativamente diferentes:
+```{r}
+
+library(Hotelling)
+data_sc=subset(tortugas,Isla=="San Cristóbal")[,3:5]
+data_esp=subset(tortugas,Isla=="Española")[,3:5]
+res=hotelling.test(data_sc,data_esp)
+res
+
+```
+Como \alpha > 0.05 observamos que no hay diferencias significativas entre estas medias lo cual contradice nuestra hipótesis.
+
+Conclusión: Las tortugas de la isla Española no són significativamente más jóvenes que las de las otras islas.
+
+Bibliografia: Análisis de Datos Multivariantes, Daniel Peña.
+
+
+
+
+
+
