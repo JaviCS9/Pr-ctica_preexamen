@@ -1,0 +1,21 @@
+ID,Especie,Edad (años),Peso (kg),Longitud del Caparazón (cm),Isla,Estado de Conservación
+T-001,Chelonoidis nigra,120,250,120,Santa Cruz,En peligro
+T-002,Chelonoidis hoodensis,90,180,95,Española,En peligro crítico
+T-003,Chelonoidis chathamensis,85,220,110,San Cristóbal,Vulnerable
+T-004,Chelonoidis porteri,110,200,100,Floreana,Casi amenazado
+T-005,Chelonoidis abingdonii,150,270,130,Pinta,Extinto en estado silvestre
+T-006,Chelonoidis nigra,70,190,105,Santa Cruz,En peligro
+T-007,Chelonoidis hoodensis,95,210,115,Española,En peligro crítico
+T-008,Chelonoidis chathamensis,80,230,125,San Cristóbal,Vulnerable
+T-009,Chelonoidis porteri,130,240,128,Floreana,Casi amenazado
+T-010,Chelonoidis abingdonii,100,210,115,Pinta,Extinto en estado silvestre
+T-011,Chelonoidis nigra,90,225,123,Santa Cruz,En peligro
+T-012,Chelonoidis hoodensis,85,205,108,Española,En peligro crítico
+T-013,Chelonoidis chathamensis,120,255,132,San Cristóbal,Vulnerable
+T-014,Chelonoidis porteri,75,215,118,Floreana,Casi amenazado
+T-015,Chelonoidis abingdonii,140,265,135,Pinta,Extinto en estado silvestre
+T-016,Chelonoidis nigra,60,175,98,Santa Cruz,En peligro
+T-017,Chelonoidis hoodensis,110,220,110,Española,En peligro crítico
+T-018,Chelonoidis chathamensis,100,230,125,San Cristóbal,Vulnerable
+T-019,Chelonoidis porteri,130,245,129,Floreana,Casi amenazado
+T-020,Chelonoidis abingdonii,140,260,130,Pinta,Extinto en estado silvestre
